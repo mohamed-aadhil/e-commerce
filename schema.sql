@@ -30,6 +30,7 @@ CREATE TABLE products (
     price NUMERIC(10,2) NOT NULL,
     product_type TEXT NOT NULL, -- 'new_book', 'used_book', 'ebook'
     metadata JSONB,             -- e.g., { "isbn": "9780132350884" }
+    images JSONB,               -- array of image URLs
     created_at TIMESTAMP DEFAULT NOW()
 );
 

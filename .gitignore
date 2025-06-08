@@ -36,3 +36,6 @@ coverage/
 
 # Sequelize CLI
 backend/config/config.json 
+
+# Hash Password
+backend/hash.js
