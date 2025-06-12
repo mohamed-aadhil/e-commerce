@@ -27,6 +27,7 @@ CREATE TABLE addresses (
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
+    author TEXT NOT NULL
     price NUMERIC(10,2) NOT NULL,
     product_type TEXT NOT NULL, -- 'new_book', 'used_book', 'ebook'
     metadata JSONB,             -- e.g., { "isbn": "9780132350884" }
@@ -37,20 +38,17 @@ CREATE TABLE products (
 -- 4. New Books Table
 CREATE TABLE new_books (
     product_id INT PRIMARY KEY REFERENCES products(id) ON DELETE CASCADE,
-    author TEXT NOT NULL
 );
 
 -- 5. Used Books Table (for future use)
 CREATE TABLE used_books (
     product_id INT PRIMARY KEY REFERENCES products(id) ON DELETE CASCADE,
-    author TEXT NOT NULL,
     condition TEXT NOT NULL -- e.g., 'Good', 'Fair', 'Like New'
 );
 
 -- 6. E-Books Table (for future use)
 CREATE TABLE ebooks (
     product_id INT PRIMARY KEY REFERENCES products(id) ON DELETE CASCADE,
-    author TEXT NOT NULL,
     file_format TEXT NOT NULL,   -- e.g., 'PDF', 'EPUB'
     download_url TEXT NOT NULL
 );
