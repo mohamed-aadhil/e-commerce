@@ -23,7 +23,7 @@ CREATE TABLE addresses (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
--- 3. Products Table (Base Table)
+-- 3. Products Table (Base Table) title, author, product_type are unique key constraints
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
