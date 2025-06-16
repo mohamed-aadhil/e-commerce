@@ -5,7 +5,8 @@ CREATE TABLE users (
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     role TEXT NOT NULL DEFAULT 'customer' CHECK (role IN ('customer', 'admin')),
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
 -- 2. Addresses Table (for user address book)
@@ -27,17 +28,20 @@ CREATE TABLE addresses (
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
-    author TEXT NOT NULL
-    price NUMERIC(10,2) NOT NULL,
-    product_type TEXT NOT NULL, -- 'new_book', 'used_book', 'ebook'
+    author TEXT NOT NULL,
+    selling_price NUMERIC(10,2) NOT NULL CHECK (selling_price >= 0),
+    cost_price NUMERIC(10,2) NOT NULL CHECK (cost_price >= 0),
+    description TEXT,
+    product_type TEXT NOT NULL DEFAULT 'new_book' CHECK (product_type IN ('new_book', 'used_book', 'ebook')),
     metadata JSONB,             -- e.g., { "isbn": "9780132350884" }
     images JSONB,               -- array of image URLs
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT NOW(),
+    CONSTRAINT selling_price_gte_cost_price CHECK (selling_price >= cost_price)
 );
 
 -- 4. New Books Table
 CREATE TABLE new_books (
-    product_id INT PRIMARY KEY REFERENCES products(id) ON DELETE CASCADE,
+    product_id INT PRIMARY KEY REFERENCES products(id) ON DELETE CASCADE
 );
 
 -- 5. Used Books Table (for future use)
@@ -169,8 +173,9 @@ CREATE TABLE refresh_tokens (
 CREATE TABLE inventory (
     id SERIAL PRIMARY KEY,
     product_id INT REFERENCES products(id) ON DELETE CASCADE,
-    quantity INT NOT NULL,
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    quantity INT NOT NULL CHECK (quantity >= 0),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    CONSTRAINT unique_product_inventory UNIQUE (product_id)
 );
 
 -- 16. Inventory Transactions Table (for audit/history)
@@ -181,3 +186,10 @@ CREATE TABLE inventory_transactions (
     reason TEXT,         -- e.g., 'order', 'restock', 'return'
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+-- Add indexes for better query performance
+CREATE INDEX idx_products_author ON products(author);
+CREATE INDEX idx_products_product_type ON products(product_type);
+CREATE INDEX idx_inventory_product_id ON inventory(product_id);
+CREATE INDEX idx_inventory_transactions_product_id ON inventory_transactions(product_id);
+CREATE INDEX idx_inventory_transactions_created_at ON inventory_transactions(created_at);

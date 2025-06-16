@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GenreService, Genre, ProductCard } from '../../services/genre.service';
+import { ProductService, Genre, ProductCard } from '../../services/product.service';
 import { ProductCard as ProductCardComponent } from '../../components/product-card/product-card';
 import { SharedHeader } from '../../../shared/header/header';
 import { RouterModule } from '@angular/router';
@@ -25,8 +25,8 @@ export class GenreProducts implements OnInit {
 
   constructor(
     private route: ActivatedRoute, 
-    private genreService: GenreService, 
-private router: Router,
+    private productService: ProductService, 
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -36,7 +36,7 @@ private router: Router,
       if (genreId) {
         this.loading = true;
         this.error = false;
-        this.genreService.getGenres().subscribe({
+        this.productService.getGenres().subscribe({
           next: (genres: Genre[]) => {
             this.genres = genres;
             this.genre = genres.find(g => g.id === +genreId) || null;
@@ -53,7 +53,7 @@ private router: Router,
   }
 
 fetchProducts(genreId: number) {
-    this.genreService.getProductsForGenre(genreId).subscribe({
+    this.productService.getProductsForGenre(genreId).subscribe({
       next: (products: ProductCard[]) => {
         this.products = products;
         this.sortProducts();
@@ -70,9 +70,9 @@ fetchProducts(genreId: number) {
 
   sortProducts() {
     if (this.sortOption === 'price-asc') {
-      this.products.sort((a, b) => a.price - b.price);
+      this.products.sort((a, b) => a.selling_price - b.selling_price);
     } else if (this.sortOption === 'price-desc') {
-      this.products.sort((a, b) => b.price - a.price);
+      this.products.sort((a, b) => b.selling_price - a.selling_price);
     }
   }
 }
