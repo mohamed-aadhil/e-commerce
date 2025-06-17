@@ -187,9 +187,4 @@ CREATE TABLE inventory_transactions (
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
--- Add indexes for better query performance
-CREATE INDEX idx_products_author ON products(author);
-CREATE INDEX idx_products_product_type ON products(product_type);
-CREATE INDEX idx_inventory_product_id ON inventory(product_id);
-CREATE INDEX idx_inventory_transactions_product_id ON inventory_transactions(product_id);
-CREATE INDEX idx_inventory_transactions_created_at ON inventory_transactions(created_at);
+
